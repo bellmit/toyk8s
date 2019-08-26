@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-alone
+  labels:
+    app: python
+    app: hello
+spec:
+  containers:
+  - image: ski2per/hellopy
+    name: hellopy-alone
+    ports:
+    - containerPort: 80
