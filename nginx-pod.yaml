@@ -19,6 +19,8 @@ spec:
     - name: nginx-frontend
       image: nginx:latest
       imagePullPolicy: IfNotPresent
+      ports:
+      - containerPort: 80
       volumeMounts:
       - mountPath: "/var/www/html"
         name: nginx-pv
