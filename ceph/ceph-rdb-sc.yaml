@@ -1,0 +1,21 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd
+  annotations:
+     storageclass.beta.kubernetes.io/is-default-class: "true"
+#provisioner: kubernetes.io/rbd
+provisioner: ceph.com/rbd
+parameters:
+  monitors: 172.16.66.101:6789,172.16.66.200:6789,172.16.66.201:6789 
+  adminId: admin
+  adminSecretName: ceph-admin-secret
+  adminSecretNamespace: test
+  pool: kubernetes
+  userId: kube
+  userSecretName: ceph-secret
+  userSecretNamespace: test
+  fsType: ext4
+  imageFormat: "2"
+  imageFeatures: "layering"
+  #imageFeatures: ""
