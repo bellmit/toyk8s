@@ -1,0 +1,1 @@
+helm install --name nginx-ingress stable/nginx-ingress -f values.yaml --namespace myns
