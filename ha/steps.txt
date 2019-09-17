@@ -1,0 +1,3 @@
+
+
+kubeadm init --config kubeadm-config.yaml --upload-certs --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250
