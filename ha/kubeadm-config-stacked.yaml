@@ -1,0 +1,12 @@
+# Command: kubeadm init --config kubeadm-config-stacked.yaml --upload-certs
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+#kubernetesVersion: stable
+kubernetesVersion: v1.15.0
+controlPlaneEndpoint: "k8s.ted.mighty:6443"
+#controlPlaneEndpoint: "172.16.66.101:6443"
+networking:
+  podSubnet: "10.244.0.0/16"
+apiServer:
+  certSANs:
+  - "ted.mighty"
