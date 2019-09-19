@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: my-ingress
+  name: dashboard-ingress
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     #nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
@@ -10,7 +10,7 @@ spec:
   - host: k8s.ted.mighty
     http:
       paths:
-      - path: /hellopy
+      - path: /
         backend:
-          serviceName: hellopy-service 
-          servicePort: 80
+          serviceName: kubernetes-dashboard
+          servicePort: 443
