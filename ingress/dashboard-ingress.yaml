@@ -1,13 +1,15 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
+  namespace: kube-system
   name: dashboard-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    #nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    #nginx.ingress.kubernetes.io/app-root: "/dashboard"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   rules:
-  - host: k8s.ted.mighty
+  - host: dashboard.ted.mighty
     http:
       paths:
       - path: /

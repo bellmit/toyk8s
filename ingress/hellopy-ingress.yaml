@@ -1,16 +1,17 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: my-ingress
+  name: hellopy-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    #nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/app-root: "/hellopy"
     #nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 spec:
   rules:
-  - host: k8s.ted.mighty
+  - host: hellopy.ted.mighty
     http:
       paths:
-      - path: /hellopy
+      - path: /
         backend:
           serviceName: hellopy-service 
           servicePort: 80

@@ -38,7 +38,7 @@ spec:
         - name: nexus-data-volume
           mountPath: /nexus-data
       containers:
-      - image: sonatype/nexus3
+      - image: sonatype/nexus3:3.18.0
         imagePullPolicy: IfNotPresent
         name: nexus
         env:
