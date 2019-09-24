@@ -41,9 +41,9 @@ spec:
       - image: sonatype/nexus3:3.18.0
         imagePullPolicy: IfNotPresent
         name: nexus
-        env:
-        - name: NEXUS_CONTEXT
-          value: nexus
+        #env:
+        #- name: NEXUS_CONTEXT
+        #  value: nexus
         ports:
         - containerPort: 8081
         - containerPort: 5000

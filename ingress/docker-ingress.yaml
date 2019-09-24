@@ -4,12 +4,13 @@ metadata:
   namespace: ci
   name: docker-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-    #nginx.ingress.kubernetes.io/rewrite-target: /$2
-    #nginx.ingress.kubernetes.io/app-root: /nexus
 spec:
+  tls:
+  - hosts:
+    - ted.mighty
+    secretName: default/ted-mighty-tls
   rules:
   - host: docker.ted.mighty
     http:
