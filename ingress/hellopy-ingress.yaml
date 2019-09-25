@@ -7,11 +7,15 @@ metadata:
     nginx.ingress.kubernetes.io/app-root: "/hellopy"
     #nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 spec:
+  tls:
+  - hosts:
+    - ted.mighty
+    secretName: default/ted-mighty-tls
   rules:
   - host: hellopy.ted.mighty
     http:
       paths:
       - path: /
         backend:
-          serviceName: hellopy-service 
+          serviceName: hellopy
           servicePort: 80

@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
       - name: hellopy
-        image: ski2per/hellopy:1.2
+        image: docker.ted.mighty/hellopy:latest
         env:
         - name: REDIS_HOST
-          value: "redis-master"
+          value: "redis.data.svc.cluster.local"
         - name: REDIS_PASS
           value: "P@ssw0rd"
         ports:
@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hellopy-service
+  name: hellopy
 spec:
   #type: NodePort
   ports:
