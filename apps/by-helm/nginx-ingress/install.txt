@@ -1,8 +1,0 @@
-helm install --name nginx-ingress stable/nginx-ingress -f values.yaml --namespace myns
-
-
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${KEY_FILE} -out ${CERT_FILE} -subj "/CN=${HOST}/O=${HOST}"
-openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout ted.mighty.key -out ted.mighty.cert
-
-kubectl -n ci create secret tls ted_mighty_tls --key ted.mighty.key --cert ted.mighty.cert
-

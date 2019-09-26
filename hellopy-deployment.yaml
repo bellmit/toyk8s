@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hellopy-deployment
+  name: hellopy
 spec:
   selector:
     matchLabels:
@@ -15,6 +15,7 @@ spec:
       containers:
       - name: hellopy
         image: docker.ted.mighty/hellopy:latest
+        imagePullPolicy: Always
         env:
         - name: REDIS_HOST
           value: "redis.data.svc.cluster.local"
