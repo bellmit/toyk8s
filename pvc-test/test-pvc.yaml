@@ -4,13 +4,11 @@ kind: PersistentVolumeClaim
 metadata:
   name: test-pvc
   namespace: default
-  labels:
-    app: test
 spec:
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
   resources:
     requests:
-      storage: 3Gi
+      storage: 1Gi
   storageClassName: ceph-rbd
