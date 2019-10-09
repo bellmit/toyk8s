@@ -11,23 +11,14 @@
   </proxies>
 
   <servers>
-    <server>
-      <id>nexus-user</id>
-      <username>user</username>
-      <!--
-      Generate user password
-      # mvn -ep -Dsettings.security=settings-security.xml
-      -->
-      <password>{lIaNkkc9LEkHA2ZZy6NoIS74YvxUBVKkyTVMXJq9Nfc=}</password>
-    </server>
   </servers>
 
   <mirrors>
     <mirror>
-      <id>nexus-repo</id>
+      <id>aliyun-repo</id>
       <mirrorOf>*</mirrorOf>
-      <name>nexus.ted.mighty</name>
-      <url>https://nexus.ted.mighty/repository/maven/</url>
+      <name>maven.aliyun.com</name>
+      <url>https://maven.aliyun.com/repository/public</url>
     </mirror>
   </mirrors>
 
