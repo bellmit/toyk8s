@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <pluginGroups>
+  </pluginGroups>
+
+  <proxies>
+  </proxies>
+
+  <servers>
+    <server>
+      <id>nexus-user</id>
+      <username>admin</username>
+      <!--
+      Generate user password
+      # mvn -ep -Dsettings.security=settings-security.xml
+      -->
+      <password>{3j+QGEYslZMHz2j6rAait3mlvVJCjstYnyLaukVXjrA=}</password>
+    </server>
+  </servers>
+
+  <mirrors>
+    <mirror>
+      <id>nexus-repo</id>
+      <mirrorOf>*</mirrorOf>
+      <name>nexus.ted.mighty</name>
+      <url>https://nexus.ted.mighty/repository/m2-proxy/</url>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+  </profiles>
+</settings>
