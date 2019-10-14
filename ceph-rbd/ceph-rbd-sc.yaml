@@ -20,3 +20,4 @@ parameters:
   fsType: ext4
   imageFormat: "2"
   imageFeatures: "layering"
+allowVolumeExpansion: true
