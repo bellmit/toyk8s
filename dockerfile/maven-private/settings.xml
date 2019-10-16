@@ -18,7 +18,7 @@
       Generate user password
       # mvn -ep -Dsettings.security=settings-security.xml
       -->
-      <password>{lIaNkkc9LEkHA2ZZy6NoIS74YvxUBVKkyTVMXJq9Nfc=}</password>
+      <password>{/GyiXCQzUhYHTSF7NknV6otQch8eD4JFE5x7nU/LLoU=}</password>
     </server>
   </servers>
 

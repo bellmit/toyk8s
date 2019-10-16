@@ -3,5 +3,5 @@ Generate master password
 # mvn -emp <password>
 -->
 <settingsSecurity>
-  <master>{shNbkpUKPecHjPP+o2Rs7ClTCRdExmPvncSezO4QoPw=}</master>
+  <master>{BE0RnUB6zM8HnOBu1wW5s8gkyCzB/V5ZPlB02lQi6d4=}</master>
 </settingsSecurity>
