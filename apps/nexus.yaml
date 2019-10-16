@@ -12,7 +12,7 @@ spec:
   volumeMode: Filesystem
   resources:
     requests:
-      storage: 10Gi
+      storage: 40Gi
   storageClassName: ceph-rbd
 ---
 apiVersion: apps/v1
