@@ -42,9 +42,9 @@ spec:
         imagePullPolicy: IfNotPresent
         resources:
           limits:
-            cpu: "6"
-          requests:
             cpu: "4"
+          requests:
+            cpu: "2"
         name: nexus
         #env:
         #- name: NEXUS_CONTEXT
