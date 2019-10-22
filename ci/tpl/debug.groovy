@@ -1,15 +1,18 @@
 #!groovy
+//Declarative pipeline
 pipeline {
   agent {
     kubernetes {
-      //cloud 'kubernetes'
-      defaultContainer 'ubuntu'
+      cloud 'kubernetes'
+      //defaultContainer 'jnlp'
+      //yamlFile 'debug.yaml'
       yaml """
-kind: Pod
+apiVersion: v1
+kind: Pod 
 spec:
   containers:
   - name: jnlp
-    image: 'docker.ted.mighty/jenkins/jnlp-slave:3.27-1'
+    image: 'docker.ted.mighty/jenkins/jnlp-slave:3.35-5-alpine'
     imagePullPolicy: IfNotPresent
     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
     resources:
@@ -20,7 +23,7 @@ spec:
         memory: "256Mi"
         cpu: "500m"
   - name: ubuntu
-    image: ubuntu:16.04
+    image: 'docker.ted.mighty/ubuntu:16.04'
     imagePullPolicy: IfNotPresent
     command: ['cat']
     tty: true
@@ -31,6 +34,8 @@ spec:
       requests:
         memory: "256Mi"
         cpu: "500m"
+  imagePullSecrets:
+  - name: nexuscred
 """
     }
   }
@@ -46,7 +51,7 @@ spec:
   stages {
     stage('Debug') {
       environment {
-        IMAGE_TAG = 'latest'
+        GGGGGGG='yoo'
       }
       steps {
         script {
@@ -56,6 +61,8 @@ spec:
           } 
 
           echo "${image_tag}"
+          sh "export IMAGE_TAGGGG=${image_tag}"
+          echo "============: ${GGGGGGG}"
 
           container('ubuntu') {
             checkout([$class: 'GitSCM',
@@ -66,8 +73,15 @@ spec:
           	        userRemoteConfigs: [[credentialsId: 'ted_gitlab', url: 'http://172.16.101.211/zhangpeng/hellopy.git']]
           	       ])
           }
-        }
+        }//script
       }
     }
-  }
-}
+
+    stage('Debug-1') {
+      steps {
+        sh 'env'
+      }
+    }
+
+  }//stages
+}//pipeline

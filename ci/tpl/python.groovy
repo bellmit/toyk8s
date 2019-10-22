@@ -20,7 +20,7 @@ spec:
         memory: "256Mi"
         cpu: "500m"
   - name: kaniko
-    image: docker.ted.mighty/kaniko:debug
+    image: docker.ted.mighty/kaniko-executor:debug-v0.13.0
     imagePullPolicy: IfNotPresent
     command: ['/busybox/cat']
     tty: true
@@ -55,9 +55,6 @@ spec:
   }
   stages {
     stage('Build with Kaniko') {
-      environment {
-        IMG_TAG = 'latest'
-      }
       steps {
         script {
           def image_tag = 'latest'
@@ -78,7 +75,7 @@ spec:
           //sh "ls"
           sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.ted.mighty/hellopy:${image_tag}"
           }
-        }
+        }//script
       }
     }
   }
