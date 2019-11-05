@@ -20,11 +20,11 @@ spec:
       targetPort: 443
       nodePort: 32443
       protocol: TCP
-    - name: redis-tcp
-      port: 26379
-      targetPort: 26379
-      nodePort: 30001
-      protocol: TCP
+    #- name: redis-tcp
+    #  port: 26379
+    #  targetPort: 26379
+    #  nodePort: 30001
+    #  protocol: TCP
   selector:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
