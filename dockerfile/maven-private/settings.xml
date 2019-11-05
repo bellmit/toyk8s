@@ -12,7 +12,7 @@
 
   <servers>
     <server>
-      <id>nexus-user</id>
+      <id>nexus</id>
       <username>user</username>
       <!--
       Generate user password
@@ -24,7 +24,7 @@
 
   <mirrors>
     <mirror>
-      <id>nexus-repo</id>
+      <id>nexus</id>
       <mirrorOf>*</mirrorOf>
       <name>nexus.ted.mighty</name>
       <url>https://nexus.ted.mighty/repository/maven/</url>
