@@ -18,11 +18,16 @@ spec:
         imagePullPolicy: Always
         env:
         - name: REDIS_HOST
+          # "svc.cluster.local": Local k8s cluster service
+          # "data.": data namespace
+          # "redis": Redis service name
           value: "redis.data.svc.cluster.local"
         - name: REDIS_PASS
           value: "P@ssw0rd"
         ports:
         - containerPort: 8000 
+      imagePullSecrets:
+      - name: nexuscred
 ---
 apiVersion: v1
 kind: Service
