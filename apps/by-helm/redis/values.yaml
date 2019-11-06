@@ -17,7 +17,7 @@ image:
   ## Bitnami Redis image tag
   ## ref: https://github.com/bitnami/bitnami-docker-redis#supported-tags-and-respective-dockerfile-links
   ##
-  tag: 5.0.5-debian-9-r104
+  tag: 5.0.5-debian-9-r169
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -40,14 +40,13 @@ image:
 
 ## Cluster settings
 cluster:
-  enabled: false
-  #enabled: true
-  slaveCount: 2
+  enabled: true
+  slaveCount: 1
 
 ## Use redis sentinel in the redis pod. This will disable the master and slave services and
 ## create one redis service with ports to the sentinel and the redis instances
 sentinel:
-  enabled: false
+  enabled: true
   ## Bitnami Redis Sentintel image version
   ## ref: https://hub.docker.com/r/bitnami/redis-sentinel/tags/
   ##
@@ -57,7 +56,7 @@ sentinel:
     ## Bitnami Redis image tag
     ## ref: https://github.com/bitnami/bitnami-docker-redis-sentinel#supported-tags-and-respective-dockerfile-links
     ##
-    tag: 5.0.5-debian-9-r37
+    tag: 5.0.5-debian-9-r162
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -121,6 +120,7 @@ sentinel:
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
     ##
     annotations: {}
+    labels: {}
     loadBalancerIP:
 
 ## Specifies the Kubernetes Cluster's Domain Name.
@@ -170,6 +170,13 @@ securityContext:
   enabled: true
   fsGroup: 1001
   runAsUser: 1001
+  ## sysctl settings for master and slave pods
+  ##
+  ## Uncomment the setting below to increase the net.core.somaxconn value
+  ##
+  # sysctls:
+  # - name: net.core.somaxconn
+  #   value: "10000"
 
 ## Use password authentication
 usePassword: true
@@ -180,6 +187,9 @@ usePassword: true
 password: P@ssw0rd
 ## Use existing secret (ignores previous password)
 # existingSecret:
+## Password key to be retrieved from Redis secret
+##
+# existingSecretPasswordKey:
 
 ## Mount secrets as files instead of environment variables
 usePasswordFile: false
@@ -285,7 +295,9 @@ master:
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
     ##
     annotations: {}
+    labels: {}
     loadBalancerIP:
+    # loadBalancerSourceRanges: ["10.0.0.0/8"]
 
   ## Enable persistence using Persistent Volume Claims
   ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
@@ -306,7 +318,6 @@ master:
     ##   GKE, AWS & OpenStack)
     ##
     # storageClass: "-"
-    #storageClass: "csi-rbd-sc"
     accessModes:
     - ReadWriteOnce
     size: 2Gi
@@ -344,7 +355,9 @@ slave:
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
     ##
     annotations: {}
+    labels: {}
     loadBalancerIP:
+    # loadBalancerSourceRanges: ["10.0.0.0/8"]
 
   ## Redis slave port
   port: 6379
@@ -425,10 +438,9 @@ slave:
     ##   GKE, AWS & OpenStack)
     ##
     # storageClass: "-"
-    #storageClass: "csi-rbd-sc"
     accessModes:
     - ReadWriteOnce
-    size: 1Gi
+    size: 2Gi
 
   ## Update strategy, can be set to RollingUpdate or onDelete by default.
   ## https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#updating-statefulsets
@@ -446,7 +458,7 @@ metrics:
   image:
     registry: docker.io
     repository: bitnami/redis-exporter
-    tag: 1.1.0-debian-9-r1
+    tag: 1.3.1-debian-9-r9
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -491,6 +503,7 @@ metrics:
     ## otherwise leave blank
     # loadBalancerIP:
     annotations: {}
+    labels: {}
 
 ##
 ## Init containers parameters:
@@ -501,7 +514,7 @@ volumePermissions:
   image:
     registry: docker.io
     repository: bitnami/minideb
-    tag: latest
+    tag: stretch
     pullPolicy: Always
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -531,7 +544,7 @@ sysctlImage:
   command: []
   registry: docker.io
   repository: bitnami/minideb
-  tag: latest
+  tag: stretch
   pullPolicy: Always
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
@@ -545,3 +558,11 @@ sysctlImage:
   #   requests:
   #     memory: 128Mi
   #     cpu: 100m
+
+## PodSecurityPolicy configuration
+## ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/
+##
+podSecurityPolicy:
+  ## Specifies whether a PodSecurityPolicy should be created
+  ##
+  create: false
