@@ -62,7 +62,7 @@ spec:
               path: config.json
   - name: cache
     persistentVolumeClaim:
-      claimName: maven-cache
+      claimName: ksbc-cache
 """
   ){
     // Pipeline Parameters
