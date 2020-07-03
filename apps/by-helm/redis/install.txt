@@ -1,1 +1,1 @@
-helm install --name redis stable/redis -f values.yaml --namespace myns
+helm3 install -f values.yaml redis-ha stable/redis-ha -n test

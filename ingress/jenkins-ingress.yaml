@@ -11,12 +11,12 @@ metadata:
     nginx.ingress.kubernetes.io/app-root: "/jenkins"
     #nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 spec:
-  tls:
-  - hosts:
-    - ted.mighty
-    secretName: default/ted-mighty-tls
+  #tls:
+  #- hosts:
+  #  - ted.mighty
+  #  secretName: default/ted-mighty-tls
   rules:
-  - host: jenkins.ted.mighty
+  - host: jenkins.ted.hehe
     http:
       paths:
       - path: /
