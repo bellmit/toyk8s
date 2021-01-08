@@ -12,6 +12,7 @@ parameters:
    csi.storage.k8s.io/provisioner-secret-namespace: default
    csi.storage.k8s.io/node-stage-secret-name: csi-rbd-secret
    csi.storage.k8s.io/node-stage-secret-namespace: default
-reclaimPolicy: Delete
+#reclaimPolicy: Delete
+reclaimPolicy: Retain 
 mountOptions:
    - discard
