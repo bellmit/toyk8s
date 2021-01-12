@@ -43,7 +43,8 @@ spec:
   #      memory: "1024Mi"
   #      cpu: "1"
   - name: kaniko
-    image: docker.cetcxl.local/kaniko-executor:debug-v0.24.0
+    #image: docker.cetcxl.local/kaniko-executor:debug-v0.24.0
+    image: docker.cetcxl.local/kaniko-executor:latest
     imagePullPolicy: IfNotPresent
     command: ['/busybox/cat']
     tty: true
@@ -98,6 +99,8 @@ spec:
     env.PROJECT_TYPE = 'npm'
 
     stage('Check Out'){
+		// Debug
+        sh "env" 
         echo "${gitlabSourceRepoHttpUrl}"
         echo "${gitlabTargetBranch}"
         checkout([$class: 'GitSCM',
@@ -110,6 +113,7 @@ spec:
                ])  
 
     } // Checkout
+
     stage('编译') {
 		if(fileExists('requirements.txt')) {
 			echo "检测到requirements.txt"
@@ -121,13 +125,14 @@ spec:
 			} else {
 				if (fileExists('package.json')) {
 					echo "检测到package.json"
-					echo "开始编译"
+					echo "开始编译NPM项目"
+                    container('npm'){
+                        sh 'npm config set registry http://maven.cetcxl.local/repository/npm/'
+                        sh 'ls;npm install;npm run build;ls'
+                    }
 				}
-			}
+			}// npm
 		}
-        sh "env"
-        sh "pwd"
-        sh "ls"
     } // Build
 
     stage('Pack Docker Image'){
@@ -144,9 +149,13 @@ spec:
 		
         
         
-		//container('kaniko') {
-		//	sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
-		//}
+		container('kaniko') {
+			sh "/kaniko/executor --verbosity=debug -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
+			echo "===================================="
+			echo "镜像打包推送成功"
+			echo "docker.cetcxl.local/${imageName}:${imageTag}"
+			echo "===================================="
+		}
     }//stage('build Docker image')
 
   }//node(POD_LABEL)
