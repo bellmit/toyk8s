@@ -30,18 +30,18 @@ spec:
       requests:
         memory: "1024Mi"
         cpu: "1"
-  #- name: maven
-  #  image: docker.cetcxl.local/mvn:ci
-  #  imagePullPolicy: Always
-  #  command: ['cat']
-  #  tty: true
-  #  resources:
-  #    limits:
-  #      memory: "3072Mi"
-  #      cpu: "2"
-  #    requests:
-  #      memory: "1024Mi"
-  #      cpu: "1"
+  - name: maven
+    image: docker.cetcxl.local/mvn:ci
+    imagePullPolicy: Always
+    command: ['cat']
+    tty: true
+    resources:
+      limits:
+        memory: "3072Mi"
+        cpu: "2"
+      requests:
+        memory: "1024Mi"
+        cpu: "1"
   - name: kaniko
     #image: docker.cetcxl.local/kaniko-executor:debug-v0.24.0
     image: docker.cetcxl.local/kaniko-executor:latest
@@ -95,8 +95,8 @@ spec:
 	
     node(POD_LABEL) {
 	
-	env.IMAGE_TAG_BACKEND = 'latest'
-    env.PROJECT_TYPE = 'npm'
+	//env.IMAGE_TAG_BACKEND = 'latest'
+    //env.PROJECT_TYPE = 'npm'
 
     stage('Check Out'){
 		// Debug
