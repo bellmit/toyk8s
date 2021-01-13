@@ -86,6 +86,7 @@ spec:
     stage('Check Out'){
 		// Debug
         sh "env" 
+
         checkout([$class: 'GitSCM',
                 branches: [[name: "${gitlabTargetBranch}"]],
                 doGenerateSubmoduleConfigurations: false,
@@ -100,52 +101,66 @@ spec:
     stage('编译') {
 	    // 从触发代码Tag来获取镜像Tag	
 		def targetBranch = "${gitlabTargetBranch}"
-		def tmp = targetBranch.split('/')
-		def tagName = tmp[-1]
-        def prefix = tagName.split('-')[0]
-        echo "$prefix"
+		def tagName = targetBranch.split('/')[-1]
+        def svcPrefix = tagName.split('-')[0]
+        env.PREFIX = svcPrefix
+
+        switch(svcPrefix) {
+            case "open":
+                env.SVC_REPO_DIR = "dap-open-platform"
+            	break
+			case "operate":
+				env.SVC_REPO_DIR = "dap-operate-platform"
+				break
+			case "manage":
+				env.SVC_REPO_DIR = "dap-data-manage-platform"
+                break
+			case "sync":
+				env.SVC_REPO_DIR = "dap-data-hive-sync-server"
+                break
+			case "execution":
+				env.SVC_REPO_DIR = "dap-algorithm-execution-platform"
+                break
+			case "handle":
+				env.SVC_REPO_DIR = "dap-algorithm-handle-platform"
+                break
+            default:
+                echo "未找到匹配Tag，退出"
+                currentBuild.result = 'ABORTED'
+                error("Abort for unmatched tag: $tagName")
+                return
+                break
+        }
         
-		//if(fileExists('requirements.txt')) {
-		//	echo "检测到requirements.txt"
-		//	echo "Python项目，不需要编译"
-		//} else {
-		//	if(fileExists('pom.xml')) {
-		//		echo "检测到pom.xml"
-		//		echo "开始编译"
-		//	} else {
-		//		if (fileExists('package.json')) {
-		//			echo "检测到package.json"
-		//			echo "开始编译NPM项目"
-        //            container('npm'){
-        //                sh 'npm config set registry http://maven.cetcxl.local/repository/npm/'
-        //                sh 'ls;npm install;npm run build;ls'
-        //            }
-		//		}
-		//	}// npm
-		//}
+		echo "开始编译项目"
+        container('maven'){
+            sh 'mvn clean install -U -Dmaven.test.skip=true'
+        }
     } // Build
 
     stage('Pack Docker Image'){
 		echo "Pack Docker Image"
+        echo "${SVC_REPO_DIR}"
+        sh "ls"
 		
         //// 从触发代码仓库URL获取镜像名
 		//def repoURL = "${gitlabSourceRepoHttpUrl}"
 		//def imageName = (repoURL =~ /.*\/(.*)\.git$/)[0][1]
 		//echo "$imageName"
-	    //// 从触发代码Tag来获取镜像Tag	
-		//def targetBranch = "${gitlabTargetBranch}"
-		//def tmp = targetBranch.split('/')
-		//def imageTag = tmp[-1]
-		//echo "docker.cetcxl.local/$imageName:$imageTag"
-        //
-		//container('kaniko') {
-		//	//sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
-		//	sh "/kaniko/executor --verbosity=debug -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
-		//	echo "===================================="
-		//	echo "镜像打包推送成功"
-		//	echo "docker.cetcxl.local/${imageName}:${imageTag}"
-		//	echo "===================================="
-		//}
+	    // 从触发代码Tag来获取镜像Tag	
+		def targetBranch = "${gitlabTargetBranch}"
+		def tmp = targetBranch.split('/')
+		def imageTag = tmp[-1]
+		echo "docker.cetcxl.local/$SVC_REPO_DIR:$imageTag"
+        
+		container('kaniko') {
+			//sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
+			sh "/kaniko/executor --verbosity=debug -f `pwd`/${SVC_REPO_DIR}/Dockerfile -c `pwd`/${SVC_REPO_DIR} --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${SVC_REPO_DIR}:${imageTag}"
+			echo "===================================="
+			echo "镜像打包推送成功"
+			echo "docker.cetcxl.local/${SVC_REPO_DIR}:${imageTag}"
+			echo "===================================="
+		}
     }//stage('Packa Docker Image')
 
   }//node(POD_LABEL)
