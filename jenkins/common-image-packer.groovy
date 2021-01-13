@@ -101,6 +101,7 @@ spec:
     stage('Check Out'){
 		// Debug
         sh "env" 
+
         checkout([$class: 'GitSCM',
                 branches: [[name: "${gitlabTargetBranch}"]],
                 doGenerateSubmoduleConfigurations: false,
@@ -138,11 +139,9 @@ spec:
         // 从触发代码仓库URL获取镜像名
 		def repoURL = "${gitlabSourceRepoHttpUrl}"
 		def imageName = (repoURL =~ /.*\/(.*)\.git$/)[0][1]
-		echo "$imageName"
 	    // 从触发代码Tag来获取镜像Tag	
 		def targetBranch = "${gitlabTargetBranch}"
-		def tmp = targetBranch.split('/')
-		def imageTag = tmp[-1]
+		def imageTag = targetBranch.split('/')[-1]
 		echo "docker.cetcxl.local/$imageName:$imageTag"
         
 		container('kaniko') {
@@ -150,7 +149,7 @@ spec:
 			sh "/kaniko/executor --verbosity=debug -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
 			echo "===================================="
 			echo "镜像打包推送成功"
-			echo "docker.cetcxl.local/${imageName}:${imageTag}"
+			echo "镜像名: docker.cetcxl.local/${imageName}:${imageTag}"
 			echo "===================================="
 		}
     }//stage('Packa Docker Image')
