@@ -120,6 +120,7 @@ spec:
 			if(fileExists('pom.xml')) {
 				echo "检测到pom.xml"
 				echo "开始编译"
+                echo "TBD"
 			} else {
 				if (fileExists('package.json')) {
 					echo "检测到package.json"
@@ -134,8 +135,6 @@ spec:
     } // Build
 
     stage('Pack Docker Image'){
-		echo "Pack Docker Image"
-		
         // 从触发代码仓库URL获取镜像名
 		def repoURL = "${gitlabSourceRepoHttpUrl}"
 		def imageName = (repoURL =~ /.*\/(.*)\.git$/)[0][1]
