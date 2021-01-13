@@ -114,26 +114,45 @@ spec:
     } // Checkout
 
     stage('编译') {
+        def projectType = ""
 		if(fileExists('requirements.txt')) {
-			echo "检测到requirements.txt"
-			echo "Python项目，不需要编译"
-		} else {
-			if(fileExists('pom.xml')) {
-				echo "检测到pom.xml"
-				echo "开始编译"
-                echo "TBD"
-			} else {
-				if (fileExists('package.json')) {
-					echo "检测到package.json"
-					echo "开始编译NPM项目"
-                    container('npm'){
-                        sh 'npm config set registry http://maven.cetcxl.local/repository/npm/'
-                        sh 'ls;npm install;npm run build;ls'
-                    }
-				}
-			}// npm
+		    projectType = "python"
 		}
-    } // Build
+		if(fileExists('pom.xml')) {
+		    projectType = "maven"
+		}
+		if(fileExists('package.json')) {
+		    projectType = "npm"
+		}
+
+        switch(projectType) {
+            case "python":
+				echo "检测到Python项目"
+				echo "不需要编译"
+                break
+            case "maven":
+				echo "检测到maven项目"
+				echo "开始编译"
+        		container('maven'){
+        		    sh 'mvn clean install -U -Dmaven.test.skip=true'
+        		}
+                break
+            case "npm":
+				echo "检测到npm项目"
+				echo "开始编译"
+                container('npm'){
+                    sh 'npm config set registry http://maven.cetcxl.local/repository/npm/'
+                    sh 'ls;npm install;npm run build;ls'
+                }
+                break
+            default:
+                echo "未找到匹配项目，退出"
+                currentBuild.result = 'ABORTED'
+				sh "pwd;ls"
+                error("unknown project")
+                break
+        } //switch
+    } //Build
 
     stage('Pack Docker Image'){
         // 从触发代码仓库URL获取镜像名
