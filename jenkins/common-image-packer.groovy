@@ -1,5 +1,6 @@
 #!groovy
 // Scripted Pipeline
+timestamps {
 podTemplate(cloud: "kubernetes-hangli",yaml: """
 apiversion: v1
 kind: Pod
@@ -175,6 +176,7 @@ spec:
 
   }//node(POD_LABEL)
 }//podTemplate
+}//timestamps
 
 
 
