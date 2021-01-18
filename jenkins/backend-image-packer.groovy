@@ -126,10 +126,11 @@ spec:
 				env.SVC_REPO_DIR = "dap-algorithm-handle-platform"
                 break
             default:
-                echo "未找到匹配Tag，退出"
-                currentBuild.result = 'ABORTED'
-                error("Abort for unmatched tag: $tagName")
-                return
+                echo "未找到匹配Tag, 打包全部服务镜像"
+                //currentBuild.result = 'ABORTED'
+                //error("Abort for unmatched tag: $tagName")
+                //return
+                env.SVC_REPO_DIR = "ALL"
                 break
         }
         
@@ -152,20 +153,30 @@ spec:
 		def targetBranch = "${gitlabTargetBranch}"
 		def tmp = targetBranch.split('/')
 		def imageTag = tmp[-1]
-		echo "docker.cetcxl.local/$SVC_REPO_DIR:$imageTag"
+		echo "Git TAG: $imageTag"
         
 		container('kaniko') {
-			//sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
-			sh "/kaniko/executor --verbosity=debug -f `pwd`/${SVC_REPO_DIR}/Dockerfile -c `pwd`/${SVC_REPO_DIR} --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${SVC_REPO_DIR}:${imageTag}"
-			echo "===================================="
-			echo "镜像打包推送成功"
-			echo "docker.cetcxl.local/${SVC_REPO_DIR}:${imageTag}"
-			echo "===================================="
+		    if(SVC_REPO_DIR == "ALL") {
+		        def svcList = ["dap-open-platform", "dap-operate-platform", "dap-data-manage-platform", "dap-data-hive-sync-server", "dap-algorithm-execution-platform", "dap-algorithm-handle-platform"]
+                for(svc in svcList){
+                    sh "/kaniko/executor --verbosity=debug -f `pwd`/${svc}/Dockerfile -c `pwd`/${svc} --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${svc}:${imageTag}"
+                    echo "===================================="
+			        echo "镜像打包推送成功"
+			        echo "docker.cetcxl.local/${svc}:${imageTag}"
+			        echo "===================================="
+                }
+		    } else {
+		        //sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
+			    sh "/kaniko/executor --verbosity=debug -f `pwd`/${SVC_REPO_DIR}/Dockerfile -c `pwd`/${SVC_REPO_DIR} --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${SVC_REPO_DIR}:${imageTag}"
+			    echo "===================================="
+			    echo "镜像打包推送成功"
+			    echo "docker.cetcxl.local/${SVC_REPO_DIR}:${imageTag}"
+			    echo "===================================="
+		    }
 		}
     }//stage('Packa Docker Image')
 
   }//node(POD_LABEL)
 }//podTemplate
 }//timestamps
-
 
