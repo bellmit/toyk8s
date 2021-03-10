@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debug
+  namespace: test
+spec:
+  selector:
+    matchLabels:
+      app: hello-alpine
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: hello-alpine
+    spec:
+      #initContainers:
+      #- name: disk-formatter
+      #  image: bu
+      containers:
+      - name: debian
+        image: debian:8-slim
+        imagePullPolicy: Always
+        volumeDevices:
+          - name: vol1
+            #devicePath: /dev/xvda
+            devicePath: /dev/xvda1
+        tty: true
+        securityContext:
+          capabilities:
+            add:
+              - ALL
+        #- name: REDIS_PORT
+        #  value: "6379"
+        #- name: REDIS_PASS
+        #  value: "P@ssw0rd"
+        #ports:
+        #  - containerPort: 8000 
+      #nodeSelector:
+      #  persistentData: "yes"
+      #
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: block-pvc
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - mysql
+            weight: 100
+      tolerations:
+      - key: "debug"
+        operator: "Equal"
+        effect: "NoSchedule"
+        value: "true"
+      imagePullSecrets:
+        - name: docker-cetcxl-local
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: hellopy-service
+#spec:
+#  type: NodePort
+#  ports:
+#    - protocol: TCP
+#      port: 8000
+#      targetPort: 8000
+#  selector:
+#    app: hellopy # SHOULD BE same as pod label
+
