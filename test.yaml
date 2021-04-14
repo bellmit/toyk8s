@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hellopy-deployment
+spec:
+  selector:
+    matchLabels:
+      app: hellopy
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: hellopy
+    spec:
+      containers:
+      - name: hellopy
+        image: docker.cetcxl.local/hellopy:1.6
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8000 
+      imagePullSecrets:
+        - name: docker
