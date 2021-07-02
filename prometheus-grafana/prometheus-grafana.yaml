@@ -1,0 +1,122 @@
+# ConfigMap
+# grafana.ini
+# ldap.toml
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-conf
+  # namespace: localmonitor
+data:
+  grafana.ini: |-
+    [paths]
+    [server]
+    domain = grafana.cetcxl.local
+    root_url = %(protocol)s://%(domain)s/
+    [database]
+    [remote_cache]
+    [dataproxy]
+    [analytics]
+    [security]
+    [snapshots]
+    [dashboards]
+    [users]
+    [auth]
+    [auth.anonymous]
+    enabled = false
+    org_name = cetcxl
+    org_role = Viewer
+    [auth.github]
+    [auth.gitlab]
+    [auth.google]
+    [auth.grafana_com]
+    [auth.azuread]
+    [auth.generic_oauth]
+    [auth.basic]
+    [auth.proxy]
+    [auth.ldap]
+    enabled = true
+    config_file = /etc/grafana/ldap.toml
+    allow_sign_up = true
+    [smtp]
+    [emails]
+    [log]
+    [log.console]
+    [log.file]
+    [log.syslog]
+    [quota]
+    [alerting]
+    [explore]
+    [metrics]
+    [metrics.graphite]
+    [grafana_com]
+    [tracing.jaeger]
+    [external_image_storage]
+    [external_image_storage.s3]
+    [external_image_storage.webdav]
+    [external_image_storage.gcs]
+    [external_image_storage.azure_blob]
+    [external_image_storage.local]
+    [rendering]
+    [panels]
+    disable_sanitize_html = true
+    [plugins]
+    [enterprise]
+    [feature_toggles]
+  ldap.toml: |-
+    [[servers]]
+    host = "172.16.101.250"
+    port = 389
+    use_ssl = false
+    start_tls = false
+    ssl_skip_verify = false
+    search_filter = "(uid=%s)"
+    search_base_dns = ["ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"]
+    [servers.attributes]
+    name = "givenName"
+    surname = "sn"
+    username = "cn"
+    member_of = "memberOf"
+    email =  "mail"
+    [[servers.group_mappings]]
+    group_dn = "cn=运维,ou=xl,ou=groups,dc=cetcxl,dc=com"
+    org_role = "Admin"
+    [[servers.group_mappings]]
+    group_dn = "cn=全员,ou=xl,ou=groups,dc=cetcxl,dc=com"
+    org_role = "Viewer"
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-conf
+  namespace: localmonitor
+data:
+  prometheus.yml: |-
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-conf-dir
+  namespace: localmonitor
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: rook-ceph-block
+  volumeMode: Filesystem
+  volumeName: pvc-dce80f06-fe8a-4af8-aa8b-128fbf04269e
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+
+
+
