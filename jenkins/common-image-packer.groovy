@@ -8,8 +8,8 @@ spec:
   cloud: kubernetes-hangli
   containers:
   - name: jnlp
-    #image: 'docker.cetcxl.local/jenkins-slave:test'
-    image: 'docker.cetcxl.local/jenkins-inbound-agent:4.3-4-alpine'
+    #image: 'docker.ted.local/jenkins-slave:test'
+    image: 'docker.ted.local/jenkins-inbound-agent:4.3-4-alpine'
     imagePullPolicy: Always
     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
     resources:
@@ -20,7 +20,7 @@ spec:
         memory: "256Mi"
         cpu: "500m"
   - name: npm
-    image: docker.cetcxl.local/node:stretch
+    image: docker.ted.local/node:stretch
     imagePullPolicy: Always
     command: ['cat']
     tty: true
@@ -32,7 +32,7 @@ spec:
         memory: "1024Mi"
         cpu: "1"
   - name: maven
-    image: docker.cetcxl.local/mvn:ci
+    image: docker.ted.local/mvn:ci
     imagePullPolicy: Always
     command: ['cat']
     tty: true
@@ -44,8 +44,8 @@ spec:
         memory: "1024Mi"
         cpu: "1"
   - name: kaniko
-    #image: docker.cetcxl.local/kaniko-executor:debug-v0.24.0
-    image: docker.cetcxl.local/kaniko-executor:latest
+    #image: docker.ted.local/kaniko-executor:debug-v0.24.0
+    image: docker.ted.local/kaniko-executor:latest
     imagePullPolicy: IfNotPresent
     command: ['/busybox/cat']
     tty: true
@@ -142,7 +142,7 @@ spec:
 				echo "检测到npm项目"
 				echo "开始编译"
                 container('npm'){
-                    sh 'npm config set registry http://maven.cetcxl.local/repository/npm/'
+                    sh 'npm config set registry http://maven.ted.local/repository/npm/'
                     sh 'ls;npm install;npm run build;ls'
                 }
                 break
@@ -162,14 +162,14 @@ spec:
 	    // 从触发代码Tag来获取镜像Tag	
 		def targetBranch = "${gitlabTargetBranch}"
 		def imageTag = targetBranch.split('/')[-1]
-		echo "docker.cetcxl.local/$imageName:$imageTag"
+		echo "docker.ted.local/$imageName:$imageTag"
         
 		container('kaniko') {
-			//sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
-			sh "/kaniko/executor --verbosity=debug -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/${imageName}:${imageTag}"
+			//sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/${imageName}:${imageTag}"
+			sh "/kaniko/executor --verbosity=debug -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/${imageName}:${imageTag}"
 			echo "===================================="
 			echo "镜像打包推送成功"
-			echo "镜像名: docker.cetcxl.local/${imageName}:${imageTag}"
+			echo "镜像名: docker.ted.local/${imageName}:${imageTag}"
 			echo "===================================="
 		}
     }//stage('Packa Docker Image')

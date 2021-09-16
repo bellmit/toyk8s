@@ -203,28 +203,28 @@ spec:
 		build_image_xlpay_admin: {
 			if (env.xlpay_admin == 'true') {
 				container('kaniko') {
-					sh "/kaniko/executor -f `pwd`/xlpay/xlpay-admin/Dockerfile -c `pwd`/xlpay/xlpay-admin --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/xlpay-admin:${IMAGE_TAG_XLPAY_ADMIN}"
+					sh "/kaniko/executor -f `pwd`/xlpay/xlpay-admin/Dockerfile -c `pwd`/xlpay/xlpay-admin --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/xlpay-admin:${IMAGE_TAG_XLPAY_ADMIN}"
 				}			
 			}			
 		}
 		build_image_xlpay_pay_user: {
 			if (env.xlpay_pay_user == 'true') {
 				container('kaniko') {
-					sh "/kaniko/executor -f `pwd`/xlpay/xlpay-pay-user/Dockerfile -c `pwd`/xlpay/xlpay-pay-user --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/xlpay-pay-user:${IMAGE_TAG_XLPAY_ADMIN}"
+					sh "/kaniko/executor -f `pwd`/xlpay/xlpay-pay-user/Dockerfile -c `pwd`/xlpay/xlpay-pay-user --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/xlpay-pay-user:${IMAGE_TAG_XLPAY_ADMIN}"
 				}
 			}			
 		}
 		buld_image_pay_trustlink_data: {
 			if (env.pay_trustlink_data == 'true') {
 				container('kaniko') {		    
-					sh "/kaniko/executor -f `pwd`/pay-trustlink-data/Dockerfile -c `pwd`/pay-trustlink-data --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/pay-trustlink-data:${IMAGE_TAG_PAY_TRUSTLINK_DATA}"
+					sh "/kaniko/executor -f `pwd`/pay-trustlink-data/Dockerfile -c `pwd`/pay-trustlink-data --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/pay-trustlink-data:${IMAGE_TAG_PAY_TRUSTLINK_DATA}"
 				}
 			}
 		}
 		build_image_pay_web: {
 			if (env.pay_web == 'true') {
 				container('kaniko') {
-					sh "/kaniko/executor -f `pwd`/pay-web/Dockerfile -c `pwd`/pay-web --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/pay-web:${IMAGE_TAG_PAY_WEB}"
+					sh "/kaniko/executor -f `pwd`/pay-web/Dockerfile -c `pwd`/pay-web --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/pay-web:${IMAGE_TAG_PAY_WEB}"
 				}
 			}
 		}

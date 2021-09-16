@@ -7,7 +7,7 @@ spec:
   cloud: kubernetes-hangli
   containers:
   - name: jnlp
-    image: 'docker.cetcxl.local/jenkins-slave:test'
+    image: 'docker.ted.local/jenkins-slave:test'
     imagePullPolicy: Always
     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
     resources:
@@ -18,7 +18,7 @@ spec:
         memory: "256Mi"
         cpu: "500m"
   - name: npm
-    image: docker.cetcxl.local/node:stretch
+    image: docker.ted.local/node:stretch
     imagePullPolicy: Always
     command: ['cat']
     tty: true
@@ -30,7 +30,7 @@ spec:
         memory: "1024Mi"
         cpu: "1"
   - name: maven
-    image: docker.cetcxl.local/mvn:xyf
+    image: docker.ted.local/mvn:xyf
     imagePullPolicy: Always
     command: ['cat']
     tty: true
@@ -42,7 +42,7 @@ spec:
         memory: "1024Mi"
         cpu: "1"
   - name: kaniko
-    image: docker.cetcxl.local/kaniko-executor:debug-v0.24.0
+    image: docker.ted.local/kaniko-executor:debug-v0.24.0
     imagePullPolicy: IfNotPresent
     command: ['/busybox/cat']
     tty: true
@@ -147,21 +147,21 @@ spec:
 						doGenerateSubmoduleConfigurations: false,
 						extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'xlpay']],
 						submoduleCfg: [],
-						userRemoteConfigs: [[credentialsId: 'gitlab', url: 'http://gitlab.cetcxl.local/business-project/xlpay/xlpay.git']]
+						userRemoteConfigs: [[credentialsId: 'gitlab', url: 'http://gitlab.ted.local/business-project/xlpay/xlpay.git']]
 					   ])	
 			    checkout([$class: 'GitSCM',
 						branches: [[name: "${params.BRANCH_PAY_TRUSTLINK_DATA}"]],
 						doGenerateSubmoduleConfigurations: false,
 						extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'pay-trustlink-data']],
 						submoduleCfg: [],
-						userRemoteConfigs: [[credentialsId: 'gitlab', url: 'http://gitlab.cetcxl.local/business-project/xlpay/pay-trustlink-data.git']]
+						userRemoteConfigs: [[credentialsId: 'gitlab', url: 'http://gitlab.ted.local/business-project/xlpay/pay-trustlink-data.git']]
 					   ])	
 			    checkout([$class: 'GitSCM',
 						branches: [[name: "${params.BRANCH_PAY_WEB}"]],
 						doGenerateSubmoduleConfigurations: false,
 						extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'pay-web']],
 						submoduleCfg: [],
-						userRemoteConfigs: [[credentialsId: 'gitlab', url: 'http://gitlab.cetcxl.local/business-project/xlpay/pay-web.git']]
+						userRemoteConfigs: [[credentialsId: 'gitlab', url: 'http://gitlab.ted.local/business-project/xlpay/pay-web.git']]
 					   ])						
 			}	
 		}
@@ -193,7 +193,7 @@ spec:
     				    echo "====== [DEBUG]: Before building ======"
     				    echo "Branch/Tag: ${params.BRANCH_PAY_WEB}"
     				    echo "Image tag: ${env.BRANCH_PAY_WEB}"
-    				    sh 'npm config set registry http://maven.cetcxl.local/repository/npm/'
+    				    sh 'npm config set registry http://maven.ted.local/repository/npm/'
     				    sh 'cd pay-web;ls;npm install;npm run build'
     				    echo "====== [DEBUG]: After building ======"
     				}			
@@ -209,28 +209,28 @@ spec:
     		build_image_xlpay_admin: {
     			if (env.xlpay_admin == 'true') {
     				container('kaniko') {
-    					sh "/kaniko/executor -f `pwd`/xlpay/xlpay-admin/Dockerfile -c `pwd`/xlpay/xlpay-admin --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/xlpay-admin:${IMAGE_TAG_XLPAY_ADMIN}"
+    					sh "/kaniko/executor -f `pwd`/xlpay/xlpay-admin/Dockerfile -c `pwd`/xlpay/xlpay-admin --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/xlpay-admin:${IMAGE_TAG_XLPAY_ADMIN}"
     				}			
     			}			
     		}
     		build_image_xlpay_pay_user: {
     			if (env.xlpay_pay_user == 'true') {
     				container('kaniko') {
-    					sh "/kaniko/executor -f `pwd`/xlpay/xlpay-pay-user/Dockerfile -c `pwd`/xlpay/xlpay-pay-user --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/xlpay-pay-user:${IMAGE_TAG_XLPAY_ADMIN}"
+    					sh "/kaniko/executor -f `pwd`/xlpay/xlpay-pay-user/Dockerfile -c `pwd`/xlpay/xlpay-pay-user --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/xlpay-pay-user:${IMAGE_TAG_XLPAY_ADMIN}"
     				}
     			}			
     		}
     		buld_image_pay_trustlink_data: {
     			if (env.pay_trustlink_data == 'true') {
     				container('kaniko') {		    
-    					sh "/kaniko/executor -f `pwd`/pay-trustlink-data/Dockerfile -c `pwd`/pay-trustlink-data --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/pay-trustlink-data:${IMAGE_TAG_PAY_TRUSTLINK_DATA}"
+    					sh "/kaniko/executor -f `pwd`/pay-trustlink-data/Dockerfile -c `pwd`/pay-trustlink-data --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/pay-trustlink-data:${IMAGE_TAG_PAY_TRUSTLINK_DATA}"
     				}
     			}
     		}
     		build_image_pay_web: {
     			if (env.pay_web == 'true') {
     				container('kaniko') {
-    					sh "/kaniko/executor -f `pwd`/pay-web/Dockerfile -c `pwd`/pay-web --insecure --skip-tls-verify --cache=true --destination=docker.cetcxl.local/pay-web:${IMAGE_TAG_PAY_WEB}"
+    					sh "/kaniko/executor -f `pwd`/pay-web/Dockerfile -c `pwd`/pay-web --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/pay-web:${IMAGE_TAG_PAY_WEB}"
     				}
     			}
     		}            
@@ -246,7 +246,7 @@ spec:
 						doGenerateSubmoduleConfigurations: false,
 						extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'ci']],
 						submoduleCfg: [],
-						userRemoteConfigs: [[credentialsId: 'gitlab', url: 'http://gitlab.cetcxl.local/devops/ci-k8s.git']]
+						userRemoteConfigs: [[credentialsId: 'gitlab', url: 'http://gitlab.ted.local/devops/ci-k8s.git']]
 					])	
 		}		
 		cp_k8s_config: {  

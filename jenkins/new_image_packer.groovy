@@ -20,7 +20,7 @@ spec:
         memory: "256Mi"
         cpu: "500m"
   - name: maven
-    image: docker.ted.local/mvn:ci
+    image: docker.ted.local/mvn:ci-3.6-jdk8
     imagePullPolicy: Always
     command: ['cat']
     tty: true
@@ -33,7 +33,8 @@ spec:
         cpu: "1"
   - name: kaniko
     #image: docker.ted.local/kaniko-executor:debug-v0.24.0
-    image: docker.ted.local/kaniko-executor:latest
+    #image: docker.ted.local/kaniko-executor:latest
+    image: docker.ted.local/kaniko-executor:v1.6.0-debug
     imagePullPolicy: IfNotPresent
     command: ['/busybox/cat']
     tty: true
@@ -68,7 +69,7 @@ spec:
     	        noteRegex: "Jenkins please retry a build",
     	        skipWorkInProgressMergeRequest: true,
 				// 填写在Jenkins上的Gitlab token名
-    	        secretToken: "image_packer_webhook_token",
+    	        secretToken: "valarmorghulis",
     	        ciSkip: false,
     	        setBuildDescription: true,
     	        addNoteOnMergeRequest: true,
@@ -84,7 +85,7 @@ spec:
 	
     node(POD_LABEL) {
 	
-    stage('Check Out'){
+    stage('拉取代码'){
 		// Debug
         sh "env" 
 
@@ -107,23 +108,14 @@ spec:
         env.PREFIX = svcPrefix
 
         switch(svcPrefix) {
-            case "open":
-                env.SVC_REPO_DIR = "dap-open-platform"
+            case "server":
+                env.SVC_REPO_DIR = "fate-serving-server"
             	break
-			case "operate":
-				env.SVC_REPO_DIR = "dap-operate-platform"
-				break
-			case "manage":
-				env.SVC_REPO_DIR = "dap-data-manage-platform"
-                break
-			case "sync":
-				env.SVC_REPO_DIR = "dap-data-hive-sync-server"
-                break
-			case "execution":
-				env.SVC_REPO_DIR = "dap-algorithm-execution-platform"
-                break
-			case "handle":
-				env.SVC_REPO_DIR = "dap-algorithm-handle-platform"
+			case "proxy":
+			    env.SVC_REPO_DIR = "fate-serving-proxy"
+			    break
+			case "admin":
+			    env.SVC_REPO_DIR = "fate-serving-admin"
                 break
             default:
                 echo "未找到匹配Tag, 打包全部服务镜像"
@@ -136,11 +128,17 @@ spec:
         
 		echo "开始编译项目"
         container('maven'){
-            sh 'mvn clean install -U -Dmaven.test.skip=true'
+            if(SVC_REPO_DIR == "ALL") {
+                sh 'mvn clean install -U -Dmaven.test.skip=true'
+            } else {
+                sh "cd ${SVC_REPO_DIR}"
+                sh 'mvn clean install -U -Dmaven.test.skip=true'
+                sh "cd .."
+            }
         }
     } // Build
 
-    stage('Pack Docker Image'){
+    stage('打包镜像'){
 		echo "Pack Docker Image"
         echo "${SVC_REPO_DIR}"
         sh "ls"
@@ -156,23 +154,22 @@ spec:
 		echo "Git TAG: $imageTag"
         
 		container('kaniko') {
+            def svcList = []
 		    if(SVC_REPO_DIR == "ALL") {
-		        def svcList = ["dap-open-platform", "dap-operate-platform", "dap-data-manage-platform", "dap-data-hive-sync-server", "dap-algorithm-execution-platform", "dap-algorithm-handle-platform"]
-                for(svc in svcList){
-                    sh "/kaniko/executor --verbosity=debug -f `pwd`/${svc}/Dockerfile -c `pwd`/${svc} --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/${svc}:${imageTag}"
-                    echo "===================================="
-			        echo "镜像打包推送成功"
-			        echo "docker.ted.local/${svc}:${imageTag}"
-			        echo "===================================="
-                }
+		        svcList.addAll(["fate-serving-server", "fate-serving-proxy", "fate-serving-admin"])
 		    } else {
-		        //sh "/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/${imageName}:${imageTag}"
-			    sh "/kaniko/executor --verbosity=debug -f `pwd`/${SVC_REPO_DIR}/Dockerfile -c `pwd`/${SVC_REPO_DIR} --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/${SVC_REPO_DIR}:${imageTag}"
-			    echo "===================================="
-			    echo "镜像打包推送成功"
-			    echo "docker.ted.local/${SVC_REPO_DIR}:${imageTag}"
-			    echo "===================================="
+                svcList[0] = "${SVC_REPO_DIR}"
 		    }
+            println svcList
+            for(svc in svcList){
+                echo "打包${svc}镜像"
+                sh "/kaniko/executor --verbosity=debug --log-format=text --dockerfile=`pwd`/${svc}/Dockerfile --context=`pwd`/${svc} --insecure --skip-tls-verify --cache=true --destination=docker.ted.local/${svc}:${imageTag}"
+                echo "===================================="
+			    echo "镜像打包推送成功"
+			    echo "docker.ted.local/${svc}:${imageTag}"
+			    echo "===================================="
+            }
+
 		}
     }//stage('Packa Docker Image')
 
